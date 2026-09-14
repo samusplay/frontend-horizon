@@ -1,69 +1,95 @@
-import Image from "next/image";
+"use client";
+import { motion } from "motion/react";
+
+import { AnimatedCounter } from "@/components/ui/animated-counter";
+import { Button } from "@/components/ui/button";
+import { CreatorsGrid } from "@/components/ui/creators-grid";
+import { FinalCta } from "@/components/ui/final-cta";
+import { GlowOrbs } from "@/components/ui/glow-orbs";
+import { HowItWorks } from "@/components/ui/how-it-works";
+import { LiveTicker } from "@/components/ui/live-ticker";
+import { ParallaxEvents } from "@/components/ui/parallax-events";
+import { TitleAurora } from "@/components/ui/title-aurora";
+import { TypewriterTitle } from "@/components/ui/typewriter-title";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="min-h-screen bg-gradient-to-b from-[#0d0221] via-[#0a0118] to-black text-white overflow-hidden">
+      <section className="relative flex flex-col items-center justify-center min-h-[90vh] px-6 text-center">
+        <GlowOrbs />
+        <TitleAurora />
+
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm backdrop-blur-sm"
+        >
+          <motion.span
+            className="h-2 w-2 rounded-full bg-red-500"
+            animate={{ opacity: [1, 0.3, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
+          <AnimatedCounter target={12483} /> espectadores conectados ahora
+        </motion.div>
+
+        <TypewriterTitle text="HORIZON" />
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="mt-4 max-w-xl text-lg text-white/60"
+        >
+          Donde cada torneo se vuelve un evento. Chat en vivo, sincronizado, sin retraso.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="mt-8 flex gap-4"
+        >
+          <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.03 }}>
+            <Button size="lg" className="bg-white text-black hover:bg-white/90">
+              Explorar eventos
+            </Button>
+          </motion.div>
+          <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.03 }}>
+            <Button size="lg" variant="outline" className="border-white/20 text-white backdrop-blur-sm">
+              Soy creador
+            </Button>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      <LiveTicker />
+      <ParallaxEvents />
+      <CreatorsGrid />
+      <HowItWorks />
+
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="grid grid-cols-2 md:grid-cols-4 gap-8 px-6 py-24 max-w-5xl mx-auto text-center"
+      >
+        {[
+          { value: 500, suffix: "+", label: "Torneos activos" },
+          { value: 50000, suffix: "+", label: "Espectadores" },
+          { value: 300, suffix: "ms", label: "Latencia de chat" },
+          { value: 24, suffix: "/7", label: "Streaming en vivo" },
+        ].map((stat) => (
+          <div key={stat.label}>
+            <div className="text-4xl font-bold">
+              <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+            </div>
+            <p className="mt-2 text-sm text-white/50">{stat.label}</p>
+          </div>
+        ))}
+      </motion.section>
+
+      <FinalCta />
+    </main>
   );
 }
