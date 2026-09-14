@@ -1,11 +1,12 @@
-// components/ui/navbar.tsx
 "use client";
 import { Button } from "@/components/ui/button";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export function Navbar() {
+  const pathname = usePathname();
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -15,6 +16,10 @@ export function Navbar() {
     setHidden(latest > previous && latest > 100);
     setScrolled(latest > 20);
   });
+
+  if (pathname === "/login" || pathname === "/register") {
+    return null;
+  }
 
   return (
     <motion.header

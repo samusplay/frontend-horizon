@@ -15,3 +15,18 @@ export const ProblemDetailsSchema = z.object({
 export const RegisterResponseSchema = z.object({
   id: z.string(),
 });
+
+export const RegisterSuccessSchema = z.object({
+  message: z.string(),
+  id: z.string(),
+});
+//esquema de Login para inicair sesion
+export const LoginSchema = z.object({
+  email: z.string().email("Correo inválido"),
+  password: z.string().min(1, "La contraseña es requerida"),
+});
+
+//validar que venga el string en login
+export const LoginSuccessSchema = z.object({
+  token: z.string(),
+});
