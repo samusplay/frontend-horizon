@@ -1,9 +1,16 @@
+// components/ui/navbar.tsx
 "use client";
 import { Button } from "@/components/ui/button";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+
+const NAV_ITEMS = [
+  { label: "Eventos", href: "/events" },
+  { label: "Creadores", href: "/creadores" },
+  { label: "Cómo funciona", href: "/#como-funciona" },
+];
 
 export function Navbar() {
   const pathname = usePathname();
@@ -35,8 +42,8 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
-          {["Eventos", "Creadores", "Cómo funciona"].map((item) => (
-            <NavLink key={item} label={item} />
+          {NAV_ITEMS.map((item) => (
+            <NavLink key={item.label} label={item.label} href={item.href} />
           ))}
         </nav>
 
@@ -61,11 +68,11 @@ export function Navbar() {
   );
 }
 
-function NavLink({ label }: { label: string }) {
+function NavLink({ label, href }: { label: string; href: string }) {
   return (
-    <a href="#" className="relative group">
+    <Link href={href} className="relative group">
       {label}
       <motion.span className="absolute -bottom-1 left-0 h-px w-full bg-white origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-    </a>
+    </Link>
   );
 }
