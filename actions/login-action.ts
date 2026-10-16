@@ -1,10 +1,10 @@
 // actions/login-action.ts
 "use server";
 
+import { readSession } from "@/src/auth/session";
 import { setToken } from "@/src/auth/token";
 import { LoginSchema, LoginSuccessSchema, ProblemDetailsSchema } from "@/src/schemas/auth";
-
-
+import { redirect } from "next/navigation";
 
 type ActionStateType = {
   errors: string[];
@@ -46,5 +46,7 @@ export async function login(prevState: ActionStateType, formData: FormData) {
   //Esperamos a la funcion del Token
   await setToken(response.token);
 
-  return { errors: [], success: "Sesión iniciada correctamente." };
+  //cada rol aterriza en su pantalla: el creador en su panel, el espectador en el catálogo
+  const session = readSession(response.token);
+  redirect(session?.role === "Creador" ? "/creadores" : "/events");
 }
