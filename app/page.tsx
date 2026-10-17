@@ -11,6 +11,7 @@ import { LiveTicker } from "@/components/ui/live-ticker";
 import { ParallaxEvents } from "@/components/ui/parallax-events";
 import { TitleAurora } from "@/components/ui/title-aurora";
 import { TypewriterTitle } from "@/components/ui/typewriter-title";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -50,13 +51,13 @@ export default function Home() {
           className="mt-8 flex gap-4"
         >
           <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.03 }}>
-            <Button size="lg" className="bg-white text-black hover:bg-white/90">
-              Explorar eventos
+            <Button asChild size="lg" className="bg-white text-black hover:bg-white/90">
+              <Link href="/live">Explorar eventos</Link>
             </Button>
           </motion.div>
           <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.03 }}>
-            <Button size="lg" variant="outline" className="border-white/20 text-white backdrop-blur-sm">
-              Soy creador
+            <Button asChild size="lg" variant="outline" className="border-white/20 text-white backdrop-blur-sm">
+              <Link href="/dashboard">Soy creador</Link>
             </Button>
           </motion.div>
         </motion.div>
