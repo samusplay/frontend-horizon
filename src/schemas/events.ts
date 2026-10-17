@@ -65,3 +65,6 @@ export const MyEventsSchema = z.object({
 });
 
 export type EventSummary = z.infer<typeof EventSummarySchema>;
+
+//el catálogo público tiene la misma forma que "mis eventos"
+export const CatalogSchema = MyEventsSchema;

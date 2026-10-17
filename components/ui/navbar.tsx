@@ -10,9 +10,9 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const NAV_ITEMS = [
-  { label: "Eventos", href: "/events" },
+  { label: "En vivo", href: "/events" },
+  { label: "Programados", href: "/programados" },
   { label: "Creadores", href: "/creadores" },
-  { label: "Cómo funciona", href: "/#como-funciona" },
 ];
 
 export function Navbar({ session }: { session: Session | null }) {
@@ -59,8 +59,20 @@ export function Navbar({ session }: { session: Session | null }) {
         ) : (
           <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
             {NAV_ITEMS.map((item) => (
-              <NavLink key={item.label} label={item.label} href={item.href} />
+              <NavLink key={item.label} label={item.label} href={item.href} active={pathname === item.href} />
             ))}
+
+            {/* todavía no existe: se muestra apagado */}
+            <span
+              aria-disabled="true"
+              title="Disponible pronto"
+              className="flex cursor-not-allowed items-center gap-2 text-white/35"
+            >
+              Salas virtuales
+              <span className="rounded-full bg-fuchsia-500/15 px-2 py-0.5 text-[10px] font-semibold text-fuchsia-200">
+                Pronto
+              </span>
+            </span>
           </nav>
         )}
 
@@ -106,11 +118,19 @@ export function Navbar({ session }: { session: Session | null }) {
   );
 }
 
-function NavLink({ label, href }: { label: string; href: string }) {
+function NavLink({ label, href, active }: { label: string; href: string; active: boolean }) {
   return (
-    <Link href={href} className="relative group">
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={`relative group ${active ? "text-white" : ""}`}
+    >
       {label}
-      <motion.span className="absolute -bottom-1 left-0 h-px w-full bg-white origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+      <motion.span
+        className={`absolute -bottom-1 left-0 h-px w-full bg-white origin-left transition-transform duration-300 ${
+          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+        }`}
+      />
     </Link>
   );
 }

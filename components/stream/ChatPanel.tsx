@@ -2,7 +2,6 @@ import { MessageSquare, SendHorizontal, Users } from "lucide-react";
 import Link from "next/link";
 
 //mensajes de ejemplo para ver el diseño, se reemplazan cuando Flow esté listo
-//simulacion mientras desarollamos el Microservicio de Go
 const SAMPLE_MESSAGES = [
   { user: "andrea_g", text: "Ya empezó, qué bien se ve", color: "text-fuchsia-300" },
   { user: "juanpa", text: "Se escucha perfecto", color: "text-sky-300" },
@@ -14,7 +13,7 @@ const SAMPLE_MESSAGES = [
 ];
 
 //por ahora es de servidor y estático, cuando conecte con Flow pasa a "use client"
-export function ChatPanel({ loggedIn }: { loggedIn: boolean }) {
+export function ChatPanel({ loggedIn, closed = false }: { loggedIn: boolean; closed?: boolean }) {
   return (
     <div className="flex h-[520px] flex-col rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl shadow-fuchsia-500/10 lg:h-[600px]">
       <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
@@ -41,7 +40,11 @@ export function ChatPanel({ loggedIn }: { loggedIn: boolean }) {
       </div>
 
       <div className="border-t border-white/10 p-3">
-        {loggedIn ? (
+        {closed ? (
+          <p className="rounded-lg bg-white/5 px-3 py-2.5 text-center text-sm text-white/50">
+            El chat cerró cuando terminó la transmisión
+          </p>
+        ) : loggedIn ? (
           <div className="flex gap-2">
             <input
               disabled

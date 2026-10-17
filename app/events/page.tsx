@@ -1,57 +1,61 @@
-import { CategoryGallery } from "components/events/category-gallery";
-import { EventCard, EventCardData } from "components/events/event-card";
-import { FeaturedEvents } from "components/events/featured-events";
+import { AutoRefresh } from "@/components/events/AutoRefresh";
+import { LiveEventCard } from "@/components/events/LiveEventCard";
+import { getLiveEvents } from "@/src/events/get-live-events";
+import type { EventSummary } from "@/src/schemas/events";
+import { CloudOff, Radio } from "lucide-react";
 
+export default async function EventsPage() {
+  let events: EventSummary[] = [];
+  let failed = false;
 
-const ALL_EVENTS: EventCardData[] = [
-  {
-    id: "1",
-    title: "Torneo Valorant Masters",
-    category: "Valorant",
-    image: "/images/categories/valorant.jpg",
-    status: "live",
-    time: "En vivo ahora",
-  },
-  {
-    id: "2",
-    title: "Liga LoL Regional",
-    category: "League of Legends",
-    image: "/images/categories/league-of-legends.jpg",
-    status: "scheduled",
-    time: "Empieza en 2h",
-  },
-  {
-    id: "3",
-    title: "Survival Semanal Minecraft",
-    category: "Minecraft",
-    image: "/images/categories/minecraft.jpg",
-    status: "scheduled",
-    time: "Mañana, 3:00 PM",
-  },
-];
+  try {
+    events = await getLiveEvents();
+  } catch {
+    failed = true;
+  }
 
-export default function EventsPage() {
   return (
-    <main className="min-h-screen pt-24 pb-16 bg-gradient-to-b from-[#0d0221] via-[#0a0118] to-black text-white">
-      <div className="text-center mb-4 px-6">
-        <h1 className="text-4xl md:text-5xl font-bold">Eventos</h1>
-        <p className="mt-3 text-white/60 max-w-xl mx-auto">
-          Descubre torneos en vivo y próximos, organizados por categoría
-        </p>
-      </div>
+    <main className="min-h-screen pt-28 pb-16 px-6 bg-gradient-to-b from-[#0d0221] via-[#0a0118] to-black text-white">
+      <AutoRefresh seconds={15} />
 
-      <FeaturedEvents />
-
-      <CategoryGallery />
-
-      <section className="px-6 py-12 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8">Todos los eventos</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_EVENTS.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-10">
+          <h1 className="flex items-center gap-3 text-4xl font-bold md:text-5xl">
+            <span className="relative flex size-3">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-500 opacity-75" />
+              <span className="relative inline-flex size-3 rounded-full bg-red-500" />
+            </span>
+            En vivo ahora
+          </h1>
+          <p className="mt-3 text-white/60">
+            {events.length > 0
+              ? `${events.length} ${events.length === 1 ? "transmisión" : "transmisiones"} en este momento`
+              : "Las transmisiones aparecen aquí apenas empiezan"}
+          </p>
         </div>
-      </section>
+
+        {failed ? (
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-white/15 bg-white/[0.02] px-6 py-16 text-center">
+            <CloudOff className="size-12 text-fuchsia-300" />
+            <h2 className="text-lg font-semibold">No pudimos cargar las transmisiones</h2>
+            <p className="text-sm text-white/50">Lo intentaremos de nuevo en unos segundos</p>
+          </div>
+        ) : events.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-white/15 bg-white/[0.02] px-6 py-16 text-center">
+            <Radio className="size-12 text-fuchsia-300" />
+            <h2 className="text-lg font-semibold">Nadie está transmitiendo ahora</h2>
+            <p className="max-w-sm text-sm text-white/50">
+              Cuando un creador salga en vivo, su transmisión aparecerá aquí sin que tengas que recargar
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
+            {events.map((event, i) => (
+              <LiveEventCard key={event.id} event={event} index={i} />
+            ))}
+          </div>
+        )}
+      </div>
     </main>
   );
 }
