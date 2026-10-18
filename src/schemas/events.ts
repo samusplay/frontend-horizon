@@ -68,3 +68,24 @@ export type EventSummary = z.infer<typeof EventSummarySchema>;
 
 //el catálogo público tiene la misma forma que "mis eventos"
 export const CatalogSchema = MyEventsSchema;
+
+
+//un id de evento que llega desde el navegador: se valida antes de armarlo en una URL
+export const EventIdSchema = z.string().uuid("Identificador de evento inválido");
+
+
+//editar: igual que crear, pero sin exigir fecha futura.
+//La regla "futura, salvo que no cambie" necesita la fecha original, así que la revisa el action
+export const UpdateEventSchema = CreateEventSchema.extend({
+  startsAt: z
+    .string()
+    .min(1, "La fecha de inicio es requerida")
+    .refine((v) => !Number.isNaN(Date.parse(v)), "La fecha de inicio no es válida"),
+});
+
+//estado del formulario de editar evento
+export type UpdateEventState = {
+  errors: string[];
+  fieldErrors: CreateEventState["fieldErrors"];
+  success: string;
+};

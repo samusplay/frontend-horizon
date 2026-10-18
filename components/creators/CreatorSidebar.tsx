@@ -13,8 +13,11 @@ const ITEMS = [
     href: "/creadores",
     label: "Mis eventos",
     icon: LayoutGrid,
-    //la pantalla de transmisión también pertenece a "Mis eventos"
-    isActive: (path: string) => path === "/creadores" || path.startsWith("/creadores/transmision"),
+    //la pantalla de transmisión y la de editar también pertenecen a "Mis eventos"
+    isActive: (path: string) =>
+      path === "/creadores" ||
+      path.startsWith("/creadores/transmision") ||
+      /^\/creadores\/[^/]+\/editar/.test(path),
   },
   {
     href: "/creadores/nuevo",

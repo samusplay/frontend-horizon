@@ -1,15 +1,25 @@
+import { DeleteEventDialog } from "@/components/creators/DeleteEventDialog";
+import { FinishEventDialog } from "@/components/creators/FinishEventDialog";
 import type { EventSummary } from "@/src/schemas/events";
-import { Eye, ImageIcon, Pencil, Radio, Trash2 } from "lucide-react";
+import { Eye, ImageIcon, Info, Pencil, Radio } from "lucide-react";
 import Link from "next/link";
 
 const STATUS = {
-  Scheduled: { label: "PRÓXIMO", className: "bg-white/10 text-white/80" },
+  Scheduled: { label: "PRÓXIMO", className: "bg-black/70 text-white" },
   Live: { label: "EN VIVO", className: "bg-red-600 text-white" },
-  Finished: { label: "FINALIZADO", className: "bg-white/10 text-white/50" },
+  Finished: { label: "FINALIZADO", className: "bg-black/70 text-white/70" },
 } as const;
 
-const disabledButton =
-  "flex h-9 cursor-not-allowed items-center justify-center gap-2 rounded-md border border-white/10 text-sm text-white/30";
+//por qué un evento ya no se puede editar ni eliminar
+const LOCKED_NOTE = {
+  Live: "En vivo: no se puede editar ni eliminar mientras transmite",
+  Finished: "Finalizado: ya no se puede editar ni eliminar",
+} as const;
+
+const primaryButton =
+  "flex h-9 items-center justify-center gap-2 rounded-md bg-white text-sm font-medium text-black transition hover:bg-white/90";
+const outlineButton =
+  "flex h-9 items-center justify-center gap-2 rounded-md border border-white/20 text-sm text-white transition hover:bg-white/10";
 
 export function MyEventCard({ event }: { event: EventSummary }) {
   const status = STATUS[event.status];
@@ -33,7 +43,9 @@ export function MyEventCard({ event }: { event: EventSummary }) {
             <ImageIcon className="size-10" />
           </div>
         )}
-        <span className={`absolute top-3 left-3 rounded-full px-2 py-1 text-xs font-semibold ${status.className}`}>
+        <span
+          className={`absolute top-3 left-3 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-white/20 backdrop-blur-sm ${status.className}`}
+        >
           {status.label}
         </span>
       </div>
@@ -43,30 +55,41 @@ export function MyEventCard({ event }: { event: EventSummary }) {
         <p className="mt-1 text-xs text-white/50 first-letter:uppercase">{dateLabel}</p>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <Link
-            href={`/creadores/transmision/${event.id}`}
-            className="flex h-9 items-center justify-center gap-2 rounded-md bg-white text-sm font-medium text-black transition hover:bg-white/90"
-          >
-            <Radio className="size-4" />
-            Transmitir
-          </Link>
+          {/* un evento finalizado no vuelve a transmitir, así que no tiene pantalla de transmisión */}
+          {event.status !== "Finished" && (
+            <Link href={`/creadores/transmision/${event.id}`} className={primaryButton}>
+              <Radio className="size-4" />
+              Transmitir
+            </Link>
+          )}
+
           <Link
             href={`/events/${event.id}`}
-            className="flex h-9 items-center justify-center gap-2 rounded-md border border-white/20 text-sm text-white transition hover:bg-white/10"
+            className={event.status === "Finished" ? `${primaryButton} col-span-2` : outlineButton}
           >
             <Eye className="size-4" />
             Ver sala
           </Link>
 
-          {/* esperan a que existan PUT y DELETE en el backend */}
-          <button type="button" disabled title="Disponible pronto" className={disabledButton}>
-            <Pencil className="size-4" />
-            Editar
-          </button>
-          <button type="button" disabled title="Disponible pronto" className={disabledButton}>
-            <Trash2 className="size-4" />
-            Eliminar
-          </button>
+          {event.status === "Scheduled" ? (
+            <>
+              <Link href={`/creadores/${event.id}/editar`} className={outlineButton}>
+                <Pencil className="size-4" />
+                Editar
+              </Link>
+              <DeleteEventDialog eventId={event.id} eventTitle={event.title} />
+            </>
+          ) : (
+            <>
+              {/* solo un evento en vivo se puede finalizar */}
+              {event.status === "Live" && <FinishEventDialog eventId={event.id} eventTitle={event.title} />}
+
+              <p className="col-span-2 flex items-start gap-2 rounded-md bg-white/5 px-3 py-2 text-xs text-white/50">
+                <Info className="mt-0.5 size-3.5 shrink-0 text-fuchsia-300" />
+                {LOCKED_NOTE[event.status]}
+              </p>
+            </>
+          )}
         </div>
       </div>
     </article>

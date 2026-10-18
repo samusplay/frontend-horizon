@@ -1,27 +1,14 @@
 "use server";
 
 import { getToken } from "@/src/auth/token";
+import { toFieldErrors } from "@/src/events/field-errors";
 import { ProblemDetailsSchema } from "@/src/schemas/auth";
 import {
   CreateEventSchema,
   CreateEventSuccessSchema,
   type CreateEventState,
 } from "@/src/schemas/events";
-import type { ZodError } from "zod";
 
-//deja solo el primer mensaje de cada campo
-function toFieldErrors(error: ZodError) {
-  const fieldErrors: CreateEventState["fieldErrors"] = {};
-
-  for (const issue of error.issues) {
-    const field = issue.path[0];
-    if (typeof field === "string" && !(field in fieldErrors)) {
-      fieldErrors[field as keyof CreateEventState["fieldErrors"]] = issue.message;
-    }
-  }
-
-  return fieldErrors;
-}
 
 export async function createEvent(
   _prevState: CreateEventState,
