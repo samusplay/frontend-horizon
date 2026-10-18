@@ -2,20 +2,21 @@ import { AutoRefresh } from "@/components/events/AutoRefresh";
 import { EventCountdown } from "@/components/stream/EventCountdown";
 import { StreamPlayer } from "@/components/stream/StreamPlayer";
 import { ChannelView } from "@/components/streams/channel-view";
+import { getSession } from "@/src/auth/session";
 import { getEvent } from "@/src/events/get-event";
 import { getScheduledEvents } from "@/src/events/get-scheduled-events";
 import { eventToStream } from "@/src/streams/from-event";
 import { VideoOff } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
 //sala pública: el video lo ve cualquiera, el chat pedirá iniciar sesión (paso 4e)
 export default async function EventRoomPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const [event, scheduled] = await Promise.all([
+  const [event, scheduled,session] = await Promise.all([
     getEvent(id),
     getScheduledEvents().catch(() => []), //si falla, solo se queda vacío el calendario
+    getSession(),
   ]);
 
   if (!event) notFound();
@@ -30,6 +31,8 @@ export default async function EventRoomPage({ params }: { params: Promise<{ id: 
     hour: "numeric",
     minute: "2-digit",
   });
+  //la sesion pasa junto con el evento
+ 
 
   const player =
     event.status === "Live" ? (
@@ -65,11 +68,12 @@ export default async function EventRoomPage({ params }: { params: Promise<{ id: 
       {/* mientras el evento no termine, la sala se actualiza sola cuando cambia su estado */}
       {event.status !== "Finished" && <AutoRefresh seconds={10} />}
 
-      <ChannelView
+       <ChannelView
         stream={eventToStream(event)}
         player={player}
         upcoming={scheduled.filter((item) => item.id !== event.id).map(eventToStream)}
         dateLabel={dateLabel}
+        loggedIn={session !== null}
       />
     </>
   );

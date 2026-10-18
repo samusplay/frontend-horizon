@@ -13,11 +13,13 @@ export function ChannelView({
   player,
   upcoming,
   dateLabel,
+  loggedIn,
 }: {
   stream: Stream;
   player: ReactNode; //el video, la cuenta regresiva o el panel de "terminó": lo decide la página
   upcoming: Stream[];
-  dateLabel:string;
+  dateLabel: string;
+  loggedIn: boolean
 }) {
   const [chatOpen, setChatOpen] = useState(true);
 
@@ -28,8 +30,7 @@ export function ChannelView({
         <ChannelHeader stream={stream} />
         <ChannelTabs
           stream={stream}
-          vods={[]}
-          recommendations={[]}
+
           upcoming={upcoming}
           trailing={
             <button
@@ -44,7 +45,9 @@ export function ChannelView({
         />
       </div>
 
-      {chatOpen && <LiveChat channelSlug={stream.slug} onClose={() => setChatOpen(false)} />}
+      {chatOpen && (
+        <LiveChat loggedIn={loggedIn} closed={stream.status === "offline"} onClose={() => setChatOpen(false)} />
+      )}
     </div>
   );
 }

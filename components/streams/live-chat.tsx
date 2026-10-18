@@ -1,42 +1,18 @@
 "use client";
 
-import { sendChatMessage } from "@/actions/send-chat-message-action";
-import { StreamAvatar } from "@/components/streams/stream-avatar";
-import { CHAT_EMOTES, CHAT_SEED } from "@/src/streams/data";
-import type { ChatMessage } from "@/src/streams/types";
-import { Send, Settings, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { Clock, MessageSquare, Settings, X } from "lucide-react";
+import Link from "next/link";
 
-export function LiveChat({ channelSlug, onClose }: { channelSlug: string; onClose?: () => void }) {
-  const [messages, setMessages] = useState<ChatMessage[]>(CHAT_SEED);
-  const [value, setValue] = useState("");
-  const [pending, setPending] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const node = scrollRef.current;
-    if (node) node.scrollTop = node.scrollHeight;
-  }, [messages]);
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const text = value.trim();
-    if (!text || pending) return;
-
-    setPending(true);
-    const result = await sendChatMessage(text);
-    setPending(false);
-
-    if ("error" in result) {
-      toast.error(result.error);
-      return;
-    }
-
-    setMessages((current) => [...current, result]);
-    setValue("");
-  }
-
+//el chat real llega con Flow: por ahora solo está el marco y el aviso
+export function LiveChat({
+  loggedIn,
+  closed,
+  onClose,
+}: {
+  loggedIn: boolean;
+  closed: boolean; //el evento ya terminó
+  onClose?: () => void;
+}) {
   return (
     <aside className="flex h-[70vh] flex-col overflow-hidden rounded-xl bg-[#120a24] ring-1 ring-white/10 lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)]">
       <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
@@ -44,8 +20,10 @@ export function LiveChat({ channelSlug, onClose }: { channelSlug: string; onClos
         <div className="flex items-center gap-1">
           <button
             type="button"
-            aria-label="Ajustes del chat"
-            className="rounded-md p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white"
+            disabled
+            title="Disponible pronto"
+            aria-label="Ajustes del chat (pronto)"
+            className="cursor-not-allowed rounded-md p-1.5 text-white/30"
           >
             <Settings className="size-4" />
           </button>
@@ -62,57 +40,36 @@ export function LiveChat({ channelSlug, onClose }: { channelSlug: string; onClos
         </div>
       </header>
 
-      <div className="flex items-center gap-2 border-b border-white/10 bg-fuchsia-500/5 px-4 py-2 text-xs text-white/60">
-        <span aria-hidden>📌</span>
-        Mensaje fijado: recuerden mantener el chat respetuoso.
+      <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
+        <MessageSquare className="size-8 text-white/20" />
+        <p className="text-sm font-semibold text-white/80">El chat en vivo llega pronto</p>
+        <p className="text-xs text-white/40">
+          Aquí aparecerán los mensajes de los espectadores cuando el chat esté activo.
+        </p>
       </div>
 
-      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
-        {messages.map((message) => (
-          <div key={message.id} className="flex gap-2.5">
-            <StreamAvatar name={message.author} accent={message.color} size="sm" />
-            <p className="min-w-0 text-sm leading-snug">
-              <span className="font-semibold" style={{ color: message.color }}>
-                {message.author}
-              </span>{" "}
-              <span className="text-white/85">{message.message}</span>
-            </p>
+      <div className="border-t border-white/10 p-3">
+        {closed ? (
+          <p className="rounded-lg bg-white/5 px-3 py-2.5 text-center text-sm text-white/50">
+            El chat cerró cuando terminó la transmisión
+          </p>
+        ) : loggedIn ? (
+          <div className="flex items-center gap-2.5 rounded-lg border border-amber-400/20 bg-amber-400/10 px-3 py-2.5 text-sm text-amber-100/90">
+            <Clock className="size-4 shrink-0 text-amber-300" />
+            Aún no puedes enviar mensajes. El chat se activa pronto.
           </div>
-        ))}
+        ) : (
+          <div className="flex items-center justify-between gap-3 rounded-lg bg-white/5 px-3 py-2.5">
+            <p className="text-sm text-white/60">Inicia sesión para chatear</p>
+            <Link
+              href="/login"
+              className="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-black hover:bg-white/90"
+            >
+              Iniciar sesión
+            </Link>
+          </div>
+        )}
       </div>
-
-      <div className="flex flex-wrap gap-1 border-t border-white/10 px-3 pt-2">
-        {CHAT_EMOTES.map((emote) => (
-          <button
-            key={emote}
-            type="button"
-            onClick={() => setValue((current) => current + emote)}
-            className="rounded-md px-1.5 py-1 text-sm text-white/80 transition hover:bg-white/10"
-          >
-            {emote}
-          </button>
-        ))}
-      </div>
-
-      <form onSubmit={handleSubmit} className="p-3 pt-2">
-        <div className="flex items-center gap-2 rounded-lg bg-white/5 px-2 ring-1 ring-white/10 focus-within:ring-fuchsia-400/40">
-          <input
-            value={value}
-            onChange={(event) => setValue(event.target.value)}
-            placeholder={`Enviar mensaje a #${channelSlug}`}
-            maxLength={200}
-            className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/40"
-          />
-          <button
-            type="submit"
-            disabled={pending || value.trim().length === 0}
-            aria-label="Enviar mensaje"
-            className="rounded-md p-1.5 text-white/70 transition hover:bg-white/10 hover:text-white disabled:opacity-40"
-          >
-            <Send className="size-4" />
-          </button>
-        </div>
-      </form>
     </aside>
   );
 }
