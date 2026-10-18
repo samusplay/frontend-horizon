@@ -1,4 +1,6 @@
 import { Navbar } from "@/components/ui/navbar";
+import { Toaster } from "@/components/ui/sonner";
+import { getSession } from "@/src/auth/session";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -18,15 +20,19 @@ export const metadata: Metadata = {
   description: "Donde cada torneo se vuelve un evento. Chat en vivo, sincronizado, sin retraso.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  //el layout es de servidor, así que puede leer la cookie y pasarle la sesión al navbar
+  const session = await getSession();
+
   return (
     <html
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-black">
-        <Navbar />
+        <Navbar session={session} />
         {children}
+        <Toaster />
       </body>
     </html>
   );
