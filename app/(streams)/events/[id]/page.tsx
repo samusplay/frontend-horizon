@@ -69,6 +69,7 @@ export default async function EventRoomPage({ params }: { params: Promise<{ id: 
       {event.status !== "Finished" && <AutoRefresh seconds={10} />}
 
        <ChannelView
+        eventId={event.id}
         stream={eventToStream(event)}
         player={player}
         upcoming={scheduled.filter((item) => item.id !== event.id).map(eventToStream)}

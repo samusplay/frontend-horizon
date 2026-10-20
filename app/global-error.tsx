@@ -3,10 +3,10 @@
 import "./globals.css";
 
 export default function GlobalError({
-  unstable_retry,
+  retry,
 }: {
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  retry: () => void;
 }) {
   return (
     <html lang="es">
@@ -15,7 +15,7 @@ export default function GlobalError({
         <p className="max-w-md text-white/60">Horizon tuvo un problema inesperado. Intenta de nuevo</p>
         <button
           type="button"
-          onClick={() => unstable_retry()}
+          onClick={() => retry()}
           className="rounded-md bg-white px-5 py-2.5 text-sm font-medium text-black"
         >
           Reintentar

@@ -9,12 +9,14 @@ import { MessageSquare } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 export function ChannelView({
+  eventId,
   stream,
   player,
   upcoming,
   dateLabel,
   loggedIn,
 }: {
+  eventId: string,
   stream: Stream;
   player: ReactNode; //el video, la cuenta regresiva o el panel de "terminó": lo decide la página
   upcoming: Stream[];
@@ -46,7 +48,13 @@ export function ChannelView({
       </div>
 
       {chatOpen && (
-        <LiveChat loggedIn={loggedIn} closed={stream.status === "offline"} onClose={() => setChatOpen(false)} />
+        <LiveChat
+          key={eventId}
+          eventId={eventId}
+          loggedIn={loggedIn}
+          closed={stream.status === "offline"}
+          onClose={() => setChatOpen(false)}
+        />
       )}
     </div>
   );

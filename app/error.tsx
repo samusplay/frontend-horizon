@@ -6,10 +6,10 @@ import { useEffect } from "react";
 
 export default function ErrorPage({
   error,
-  unstable_retry,
+  retry,
 }: {
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  retry: () => void;
 }) {
   useEffect(() => {
     console.error(error);
@@ -29,7 +29,7 @@ export default function ErrorPage({
       <div className="flex flex-wrap justify-center gap-3">
         <button
           type="button"
-          onClick={() => unstable_retry()}
+          onClick={() => retry()}
           className="flex items-center gap-2 rounded-md bg-white px-5 py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
         >
           <RefreshCw className="size-4" />
