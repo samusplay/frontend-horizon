@@ -41,10 +41,14 @@ export function formatRelativeTime(iso: string) {
 
   if (days <= 0) return hours <= 0 ? "hace unos minutos" : `hace ${hours} h`;
   if (days === 1) return "ayer";
-  if (days < 7) return `hace ${days} días`;
-  if (days < 30) return `hace ${Math.floor(days / 7)} semanas`;
-  if (days < 365) return `hace ${Math.floor(days / 30)} meses`;
-  return `hace ${Math.floor(days / 365)} años`;
+
+  const plural = (value: number, singular: string, pluralForm: string) =>
+    `${value} ${value === 1 ? singular : pluralForm}`;
+
+  if (days < 7) return `hace ${plural(days, "día", "días")}`;
+  if (days < 30) return `hace ${plural(Math.floor(days / 7), "semana", "semanas")}`;
+  if (days < 365) return `hace ${plural(Math.floor(days / 30), "mes", "meses")}`;
+  return `hace ${plural(Math.floor(days / 365), "año", "años")}`;
 }
 
 export function formatUptime(startedAt: string) {
@@ -56,6 +60,69 @@ export function formatUptime(startedAt: string) {
 
   if (hours <= 0) return `${minutes} min`;
   return `${hours} h ${minutes} min`;
+}
+
+export function isUpcoming(iso?: string) {
+  if (!iso) return false;
+  return new Date(iso).getTime() > Date.now();
+}
+
+// Fecha para "próxima emisión": hoy/mañana + hora, o día completo.
+export function formatUpcoming(iso?: string) {
+  if (!iso) return undefined;
+
+  const date = new Date(iso);
+  const now = new Date();
+  const diff = date.getTime() - now.getTime();
+  if (diff <= 0) return "próximamente";
+
+  const time = new Intl.DateTimeFormat("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  const dayDiff = Math.round((startOfDate - startOfToday) / 86_400_000);
+
+  if (dayDiff === 0) return `hoy a las ${time}`;
+  if (dayDiff === 1) return `mañana a las ${time}`;
+
+  return new Intl.DateTimeFormat("es-ES", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+export function formatDate(iso?: string) {
+  if (!iso) return "—";
+  return new Intl.DateTimeFormat("es-ES", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(iso));
+}
+
+export const WEEKDAYS = [
+  { value: "lun", label: "Lunes", short: "Lun" },
+  { value: "mar", label: "Martes", short: "Mar" },
+  { value: "mie", label: "Miércoles", short: "Mié" },
+  { value: "jue", label: "Jueves", short: "Jue" },
+  { value: "vie", label: "Viernes", short: "Vie" },
+  { value: "sab", label: "Sábado", short: "Sáb" },
+  { value: "dom", label: "Domingo", short: "Dom" },
+] as const;
+
+export function weekdayLabel(value: string) {
+  return WEEKDAYS.find((day) => day.value === value)?.label ?? value;
+}
+
+// Índice del día actual empezando en lunes (0) y terminando en domingo (6).
+export function todayWeekdayIndex() {
+  return (new Date().getDay() + 6) % 7;
 }
 
 export function viewersForCategory(slug: string, streams: Stream[]) {

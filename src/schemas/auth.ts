@@ -30,3 +30,23 @@ export const LoginSchema = z.object({
 export const LoginSuccessSchema = z.object({
   token: z.string(),
 });
+
+// --- Recuperación de contraseña ---
+
+export const ForgotPasswordSchema = z.object({
+  email: z.string().email("Correo inválido"),
+});
+
+export const ResetPasswordSchema = z
+  .object({
+    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+    confirmPassword: z.string().min(1, "Confirma la contraseña"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });
+
+export const MessageResponseSchema = z.object({
+  message: z.string(),
+});

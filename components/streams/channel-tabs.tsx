@@ -1,92 +1,102 @@
 "use client";
 
+import { ChannelAbout } from "@/components/streams/channel-about";
+import { ChannelChatOffline } from "@/components/streams/channel-chat-offline";
+import { ChannelClips } from "@/components/streams/channel-clips";
+import { ChannelOfflineStage } from "@/components/streams/channel-offline-stage";
+import { ChannelSchedule } from "@/components/streams/channel-schedule";
 import { EmptyState } from "@/components/streams/empty-state";
+import { LiveChat } from "@/components/streams/live-chat";
 import { RecommendationRail } from "@/components/streams/recommendation-rail";
 import { StreamInfoPanel } from "@/components/streams/stream-info-panel";
 import { VodCard } from "@/components/streams/vod-card";
 import { VodRow } from "@/components/streams/vod-row";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Stream, Vod } from "@/src/streams/types";
-import { categoryName, formatRelativeTime, formatViewers } from "@/src/streams/utils";
-import { Calendar, Film, Scissors } from "lucide-react";
+import type {
+  Channel,
+  Clip,
+  ScheduleSlot,
+  Stream,
+  Vod,
+} from "@/src/streams/types";
+import { categoryName } from "@/src/streams/utils";
+import { Film } from "lucide-react";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 export function ChannelTabs({
-  stream,
+  channel,
+  liveStream,
+  nextStream,
   vods,
+  clips,
+  schedule,
   recommendations,
-  upcoming,
+  value,
+  onValueChange,
   trailing,
 }: {
-  stream: Stream;
+  channel: Channel;
+  liveStream?: Stream;
+  nextStream?: Stream;
   vods: Vod[];
+  clips: Clip[];
+  schedule: ScheduleSlot[];
   recommendations: Stream[];
-  upcoming: Stream[];
+  value: string;
+  onValueChange: (value: string) => void;
   trailing?: ReactNode;
 }) {
   return (
-    <Tabs defaultValue="home">
-      <div className="flex items-center justify-between gap-2 border-b border-white/10">
-        <TabsList className="flex-1">
-          <TabsTrigger value="home">Inicio</TabsTrigger>
-          <TabsTrigger value="about">Acerca de</TabsTrigger>
+    <Tabs value={value} onValueChange={onValueChange}>
+      <div className="flex min-w-0 items-center justify-between gap-2 border-b border-white/10">
+        <TabsList className="min-w-0 flex-1 gap-0.5 sm:gap-1">
+          <TabsTrigger value="inicio">Inicio</TabsTrigger>
+          <TabsTrigger value="acerca">Acerca de</TabsTrigger>
           <TabsTrigger value="clips">Clips</TabsTrigger>
           <TabsTrigger value="videos">Vídeos</TabsTrigger>
-          <TabsTrigger value="schedule">Calendario</TabsTrigger>
+          <TabsTrigger value="calendario">Calendario</TabsTrigger>
+          <TabsTrigger value="chat">Chat</TabsTrigger>
         </TabsList>
         {trailing}
       </div>
 
-      <TabsContent value="home" className="space-y-8">
-        <StreamInfoPanel stream={stream} />
-
-        <VodRow vods={vods.slice(0, 6)} title="Emisiones recientes" />
-
-        <RecommendationRail
-          streams={recommendations}
-          title={`Los espectadores de ${stream.streamer.name} también ven`}
-        />
+      <TabsContent value="inicio" className="space-y-8">
+        {liveStream ? (
+          <>
+            <StreamInfoPanel stream={liveStream} />
+            <VodRow vods={vods.slice(0, 6)} title="Emisiones recientes" />
+            <ChannelCategories channel={channel} />
+            <RecommendationRail
+              streams={recommendations}
+              title={`Los espectadores de ${channel.name} también ven`}
+            />
+          </>
+        ) : (
+          <>
+            <ChannelOfflineStage
+              channel={channel}
+              nextStream={nextStream}
+              lastVod={vods[0]}
+            />
+            {vods.length > 0 && (
+              <VodRow vods={vods.slice(0, 6)} title="Emisiones recientes" />
+            )}
+            <ChannelCategories channel={channel} />
+            <RecommendationRail
+              streams={recommendations}
+              title={`Los espectadores de ${channel.name} también ven`}
+            />
+          </>
+        )}
       </TabsContent>
 
-      <TabsContent value="about" className="space-y-6">
-        <div className="rounded-xl bg-[#120a24] p-5 ring-1 ring-white/10">
-          <h2 className="text-sm font-semibold text-white">Sobre {stream.streamer.name}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-white/70">{stream.description}</p>
-
-          <dl className="mt-5 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
-            <div className="rounded-lg bg-white/5 p-3">
-              <dt className="text-xs text-white/50">Categoría</dt>
-              <dd className="mt-1 font-semibold text-white">{categoryName(stream.categorySlug)}</dd>
-            </div>
-            <div className="rounded-lg bg-white/5 p-3">
-              <dt className="text-xs text-white/50">Idioma</dt>
-              <dd className="mt-1 font-semibold text-white">{stream.language}</dd>
-            </div>
-            <div className="rounded-lg bg-white/5 p-3">
-              <dt className="text-xs text-white/50">Espectadores</dt>
-              <dd className="mt-1 font-semibold text-white">{formatViewers(stream.viewers)}</dd>
-            </div>
-          </dl>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {stream.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-white/70"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+      <TabsContent value="acerca">
+        <ChannelAbout channel={channel} />
       </TabsContent>
 
       <TabsContent value="clips">
-        <EmptyState
-          icon={Scissors}
-          title="Aún no hay clips"
-          description="Cuando los espectadores creen clips de las mejores jugadas aparecerán aquí."
-        />
+        <ChannelClips channel={channel} clips={clips} />
       </TabsContent>
 
       <TabsContent value="videos">
@@ -94,42 +104,57 @@ export function ChannelTabs({
           <EmptyState
             icon={Film}
             title="Sin vídeos disponibles"
-            description="Las emisiones pasadas de este canal aparecerán en cuanto se publiquen."
+            description={`Las emisiones pasadas de ${channel.name} aparecerán en cuanto se publiquen.`}
           />
         ) : (
-          <div className="grid gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-            {vods.map((vod) => (
-              <VodCard key={vod.id} vod={vod} />
-            ))}
+          <div className="space-y-5">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-xl font-bold text-white">Vídeos</h2>
+              <span className="text-xs text-white/45">{vods.length} emisiones</span>
+            </div>
+            <div className="grid gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+              {vods.map((vod) => (
+                <VodCard key={vod.id} vod={vod} />
+              ))}
+            </div>
           </div>
         )}
       </TabsContent>
 
-      <TabsContent value="schedule">
-        {upcoming.length === 0 ? (
-          <EmptyState
-            icon={Calendar}
-            title="No hay emisiones programadas"
-            description="Este canal no tiene transmisiones previstas por ahora."
-          />
+      <TabsContent value="calendario">
+        <ChannelSchedule channel={channel} schedule={schedule} nextStream={nextStream} />
+      </TabsContent>
+
+      <TabsContent value="chat">
+        {liveStream ? (
+          <div className="mx-auto max-w-3xl">
+            <LiveChat channelSlug={channel.slug} embedded />
+          </div>
         ) : (
-          <ul className="divide-y divide-white/10 overflow-hidden rounded-xl bg-[#120a24] ring-1 ring-white/10">
-            {upcoming.map((item) => (
-              <li key={item.id} className="flex items-center justify-between gap-4 px-4 py-3.5">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-white">{item.title}</p>
-                  <p className="text-xs text-white/50">
-                    {categoryName(item.categorySlug)} · {item.language}
-                  </p>
-                </div>
-                <span className="shrink-0 text-xs text-white/50">
-                  {formatRelativeTime(item.startedAt)}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <ChannelChatOffline channel={channel} nextStream={nextStream} />
         )}
       </TabsContent>
     </Tabs>
+  );
+}
+
+function ChannelCategories({ channel }: { channel: Channel }) {
+  return (
+    <section className="space-y-3">
+      <h2 className="text-xl font-bold text-white">
+        Categorías emitidas recientemente
+      </h2>
+      <div className="flex flex-wrap gap-2">
+        {channel.categories.map((slug) => (
+          <Link
+            key={slug}
+            href={`/category/${slug}`}
+            className="rounded-full bg-white/8 px-3 py-1.5 text-xs font-semibold text-white/75 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-white"
+          >
+            {categoryName(slug)}
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }

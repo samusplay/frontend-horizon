@@ -104,7 +104,7 @@ export function GlobalSearch() {
               {results.streams.map((stream) => (
                 <Link
                   key={stream.id}
-                  href={`/channel/${stream.slug}`}
+                  href={`/channel/${stream.channelSlug}`}
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition hover:bg-white/5"
                 >

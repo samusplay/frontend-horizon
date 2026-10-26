@@ -8,9 +8,11 @@ import Link from "next/link";
 export function LoginView({
   redirectTo,
   justRegistered = false,
+  justReset = false,
 }: {
   redirectTo?: string;
   justRegistered?: boolean;
+  justReset?: boolean;
 }) {
   return (
     <div className="w-full max-w-lg">
@@ -25,7 +27,7 @@ export function LoginView({
         </span>
       </motion.div>
 
-      {justRegistered && (
+      {(justRegistered || justReset) && (
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -33,7 +35,9 @@ export function LoginView({
           className="mb-4 flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300"
         >
           <CircleCheck className="size-4 shrink-0" />
-          Cuenta creada correctamente. Inicia sesión para continuar.
+          {justReset
+            ? "Contraseña actualizada. Inicia sesión con tu nueva contraseña."
+            : "Cuenta creada correctamente. Inicia sesión para continuar."}
         </motion.div>
       )}
 

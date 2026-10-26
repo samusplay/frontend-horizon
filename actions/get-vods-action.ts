@@ -17,3 +17,10 @@ export async function getVodsByStreamer(streamerName: string): Promise<Vod[]> {
   const vods = await getVods();
   return vods.filter((vod) => vod.streamerName === streamerName);
 }
+
+export async function getVodsByChannel(channelSlug: string): Promise<Vod[]> {
+  const vods = await getVods();
+  return vods
+    .filter((vod) => vod.channelSlug === channelSlug)
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+}

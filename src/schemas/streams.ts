@@ -26,6 +26,7 @@ export const StreamStatusSchema = z.enum(["live", "offline", "scheduled"]);
 export const StreamSchema = z.object({
   id: z.string(),
   slug: z.string(),
+  channelSlug: z.string(),
   title: z.string(),
   streamer: StreamerSchema,
   categorySlug: z.string(),
@@ -52,9 +53,68 @@ export const FollowedChannelSchema = z.object({
 
 export const FollowedChannelListSchema = z.array(FollowedChannelSchema);
 
+// Canales/creadores: identidad estable independiente de la emisión.
+export const ChannelSocialSchema = z.object({
+  label: z.string(),
+  url: z.string(),
+});
+
+export const ChannelPanelSchema = z.object({
+  title: z.string(),
+  body: z.string(),
+});
+
+export const ChannelSchema = z.object({
+  slug: z.string(),
+  name: z.string(),
+  accent: z.string(),
+  verified: z.boolean(),
+  followers: z.number().int().nonnegative(),
+  bio: z.string(),
+  avatar: z.string().optional(),
+  socials: z.array(ChannelSocialSchema).optional(),
+  categories: z.array(z.string()),
+  lastLiveAt: z.string().optional(),
+  nextLiveAt: z.string().optional(),
+  offlineMessage: z.string().optional(),
+  totalViews: z.number().int().nonnegative().optional(),
+  joinedAt: z.string().optional(),
+  panels: z.array(ChannelPanelSchema).optional(),
+});
+
+export const ChannelListSchema = z.array(ChannelSchema);
+
+// Horario semanal del canal.
+export const ScheduleSlotSchema = z.object({
+  id: z.string(),
+  channelSlug: z.string(),
+  weekday: z.enum(["lun", "mar", "mie", "jue", "vie", "sab", "dom"]),
+  startTime: z.string().regex(/^\d{2}:\d{2}$/),
+  endTime: z.string().regex(/^\d{2}:\d{2}$/),
+  title: z.string(),
+  categorySlug: z.string().optional(),
+});
+
+export const ScheduleSlotListSchema = z.array(ScheduleSlotSchema);
+
+// Clips cortos creados por la comunidad.
+export const ClipSchema = z.object({
+  id: z.string(),
+  channelSlug: z.string(),
+  title: z.string(),
+  thumbnail: z.string(),
+  durationSeconds: z.number().int().nonnegative(),
+  views: z.number().int().nonnegative(),
+  createdAt: z.string(),
+  url: z.string(),
+});
+
+export const ClipListSchema = z.array(ClipSchema);
+
 // Emisiones pasadas (VODs).
 export const VodSchema = z.object({
   id: z.string(),
+  channelSlug: z.string(),
   streamerName: z.string(),
   title: z.string(),
   thumbnail: z.string(),

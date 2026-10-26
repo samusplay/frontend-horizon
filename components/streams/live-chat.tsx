@@ -2,13 +2,22 @@
 
 import { sendChatMessage } from "@/actions/send-chat-message-action";
 import { StreamAvatar } from "@/components/streams/stream-avatar";
+import { cn } from "@/lib/utils";
 import { CHAT_EMOTES, CHAT_SEED } from "@/src/streams/data";
 import type { ChatMessage } from "@/src/streams/types";
 import { Send, Settings, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-export function LiveChat({ channelSlug, onClose }: { channelSlug: string; onClose?: () => void }) {
+export function LiveChat({
+  channelSlug,
+  onClose,
+  embedded = false,
+}: {
+  channelSlug: string;
+  onClose?: () => void;
+  embedded?: boolean;
+}) {
   const [messages, setMessages] = useState<ChatMessage[]>(CHAT_SEED);
   const [value, setValue] = useState("");
   const [pending, setPending] = useState(false);
@@ -38,7 +47,14 @@ export function LiveChat({ channelSlug, onClose }: { channelSlug: string; onClos
   }
 
   return (
-    <aside className="flex h-[70vh] flex-col overflow-hidden rounded-xl bg-[#120a24] ring-1 ring-white/10 lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)]">
+    <aside
+      className={cn(
+        "flex-col overflow-hidden rounded-xl bg-[#120a24] ring-1 ring-white/10",
+        embedded
+          ? "flex h-[65vh]"
+          : "hidden h-[70vh] lg:sticky lg:top-20 lg:flex lg:h-[calc(100vh-6rem)]"
+      )}
+    >
       <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
         <span className="text-sm font-semibold text-white">Chat</span>
         <div className="flex items-center gap-1">

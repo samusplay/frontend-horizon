@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 import { LoginSchema } from "@/src/schemas/auth"
+import Link from "next/link"
 import { useActionState, useEffect, useState } from "react"
 import { toast } from "sonner"
 import { AuthCard } from "./auth-card"
@@ -66,6 +67,14 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
             className="h-11 bg-white/5 border-white/10 focus-visible:ring-fuchsia-400/50 focus-visible:border-fuchsia-400/50 text-base"
           />
           {fieldErrors.password && <p className="text-xs text-red-400">{fieldErrors.password}</p>}
+          <div className="flex justify-end">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-white/50 underline underline-offset-4 transition-colors hover:text-fuchsia-300"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
         </div>
 
         <Alert variant="error" show={state.errors.length > 0}>

@@ -13,7 +13,7 @@ export function LiveChannelCard({ stream }: { stream: Stream }) {
 
   return (
     <motion.article whileHover={{ y: -4 }} transition={{ duration: 0.2 }} className="group">
-      <Link href={`/channel/${stream.slug}`} className="block">
+      <Link href={`/channel/${stream.channelSlug}`} className="block">
         <div className="relative aspect-video overflow-hidden rounded-xl ring-1 ring-white/10">
           <img
             src={stream.thumbnail}
@@ -42,7 +42,7 @@ export function LiveChannelCard({ stream }: { stream: Stream }) {
       <div className="mt-2.5 flex gap-2.5">
         <StreamAvatar name={stream.streamer.name} accent={stream.streamer.accent} size="md" />
         <div className="min-w-0 flex-1">
-          <Link href={`/channel/${stream.slug}`}>
+          <Link href={`/channel/${stream.channelSlug}`}>
             <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-white group-hover:text-fuchsia-300">
               {stream.title}
             </h3>

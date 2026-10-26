@@ -137,6 +137,7 @@ export function StreamsSidebar({
 
 function FollowedRow({ channel }: { channel: FollowedChannel }) {
   const isLive = channel.status === "live";
+  const isScheduled = channel.status === "scheduled";
 
   return (
     <Link
@@ -160,6 +161,8 @@ function FollowedRow({ channel }: { channel: FollowedChannel }) {
           <span className="size-2 rounded-full bg-red-500" />
           {formatViewers(channel.viewers)}
         </span>
+      ) : isScheduled ? (
+        <span className="shrink-0 text-[10px] font-medium text-fuchsia-300/70">Programado</span>
       ) : (
         <span className="shrink-0 text-[10px] text-white/30">Desconectado</span>
       )}
@@ -170,7 +173,7 @@ function FollowedRow({ channel }: { channel: FollowedChannel }) {
 function LiveRow({ stream }: { stream: Stream }) {
   return (
     <Link
-      href={`/channel/${stream.slug}`}
+      href={`/channel/${stream.channelSlug}`}
       className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition hover:bg-white/5"
     >
       <StreamAvatar name={stream.streamer.name} accent={stream.streamer.accent} size="sm" />

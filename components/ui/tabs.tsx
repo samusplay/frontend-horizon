@@ -23,7 +23,7 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "relative -mb-px whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-semibold text-white/60 outline-none transition hover:text-white",
+        "relative -mb-px whitespace-nowrap border-b-2 border-transparent px-2 py-2.5 text-xs font-semibold text-white/60 outline-none transition hover:text-white sm:px-3 sm:text-sm",
         "data-[state=active]:border-fuchsia-400 data-[state=active]:text-white",
         className
       )}

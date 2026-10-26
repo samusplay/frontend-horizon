@@ -19,6 +19,9 @@ const PUBLIC_NAV_ITEMS = [
 
 const CREATOR_NAV_ITEM = { label: "Creador", href: "/dashboard" };
 
+// Rutas que usan el layout de autenticación (sin navbar).
+const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password"];
+
 export function Navbar({
   isAuthenticated = false,
   notifications = [],
@@ -37,7 +40,7 @@ export function Navbar({
     setScrolled(latest > 20);
   });
 
-  if (pathname === "/login" || pathname === "/register") {
+  if (AUTH_PATHS.includes(pathname)) {
     return null;
   }
 

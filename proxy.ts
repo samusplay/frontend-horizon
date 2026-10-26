@@ -12,7 +12,7 @@ import type { NextRequest } from "next/server";
 const PROTECTED_PREFIXES = ["/dashboard"];
 
 // Rutas de autenticación: si ya hay sesión, no tiene sentido visitarlas.
-const AUTH_ROUTES = ["/login", "/register"];
+const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -36,5 +36,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: ["/dashboard/:path*", "/login", "/register", "/forgot-password"],
 };
