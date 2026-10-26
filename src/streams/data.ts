@@ -862,6 +862,15 @@ export const SCHEDULES: ScheduleSlot[] = [
     title: "Flex sin presión",
     categorySlug: "league-of-legends",
   },
+  {
+    id: "sch27",
+    channelSlug: "la-grieta",
+    weekday: "lun",
+    startTime: "17:00",
+    endTime: "20:00",
+    title: "Noche de la comunidad",
+    categorySlug: "league-of-legends",
+  },
 ];
 
 // Notificaciones del usuario (campana de la barra superior).
